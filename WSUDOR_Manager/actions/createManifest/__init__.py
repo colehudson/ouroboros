@@ -51,8 +51,29 @@ def stagingManifest():
 						key_temp = re.sub('\_'+str(counter)+'$', '', key)
 						temp_dictionary[key_temp] = f[key]
 						if key.startswith('isRepresentedBy'):
-							form_data['isRepresentedBy'] = temp_dictionary['dsID_'+str(counter)]
-							temp_dictionary.pop(key, None)
+							represented = 'isRepresentedBy'
+							if represented in form_data:
+								print "isRepresentedBy is already filled in"
+								temp_dictionary.pop(key, None)
+								pass
+							else:
+								# Needs to not have isRepresentedBy for multiple datastreams when selected
+								print "does not have isRepresentedBy"
+								try:
+									for each in temp_dictionary:
+										print each
+									form_data['isRepresentedBy'] = temp_dictionary['dsID_'+str(counter)]
+									print "here"
+								except KeyError:
+									print "awesome"
+								temp_dictionary.pop(key, None)
+
+			# adds a blank 'isRepresentedBy in ObjMeta if no datastream has been selected to for this'
+			represented = 'isRepresentedBy'
+			if represented in form_data:
+				pass
+			else:
+				form_data['isRepresentedBy'] = ''
 
 			if flag:
 				break

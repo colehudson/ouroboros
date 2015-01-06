@@ -4,6 +4,7 @@ from WSUDOR_Manager.fedoraHandles import fedora_handle
 from datetime import datetime
 import sqlalchemy
 from json import JSONEncoder
+import json
 from flask import Response, jsonify
 
 class user_pids(db.Model):
@@ -159,7 +160,7 @@ class ObjMeta:
 		pass
 
 	def downloadFile(self,form_data):
-		form_data = str(form_data)
+		form_data = str(json.dumps(form_data))
 		return Response(form_data, mimetype="application/json", headers={"Content-Disposition" : "attachment; filename=objMeta.json"})
 
 	def writeToObject(self):
