@@ -6,6 +6,7 @@ from WSUDOR_Manager import utilities
 from flask import Blueprint, render_template, request, jsonify, redirect, session, Response, json
 import re
 import requests
+import collections
 from WSUDOR_Manager.models import ObjMeta
 
 createManifest = Blueprint('createManifest', __name__, template_folder='templates', static_folder="static")
@@ -24,7 +25,7 @@ def stagingManifest():
 		return redirect("/tasks/createManifest", code=302)
 
 	if request.method == 'POST':
-		# objMeta initial model
+		# Create initial ObjMeta model
 		form_data = {
 		'id' : request.form['objID'],
 		'label' : request.form['objLabel'],
@@ -38,51 +39,48 @@ def stagingManifest():
 		'datastreams' : []
 		}
 
-		# extract datastreams
+
+		# Extract datastreams and place into ObjMeta model/form_data dictionary
 		f = request.form
-		counter = 1
-		while True:
-			temp_dictionary = {}
-			flag = True
-			for key in f.keys():
-				# look for number and append each one that matches current number to a dictionary
-					if key.endswith(str(counter)):
-						flag = False
-						key_temp = re.sub('\_'+str(counter)+'$', '', key)
-						temp_dictionary[key_temp] = f[key]
-						if key.startswith('isRepresentedBy'):
-							represented = 'isRepresentedBy'
-							if represented in form_data:
-								print "isRepresentedBy is already filled in"
-								temp_dictionary.pop(key, None)
-								pass
-							else:
-								# Needs to not have isRepresentedBy for multiple datastreams when selected
-								print "does not have isRepresentedBy"
-								try:
-									for each in temp_dictionary:
-										print each
-									form_data['isRepresentedBy'] = temp_dictionary['dsID_'+str(counter)]
-									print "here"
-								except KeyError:
-									print "awesome"
-								temp_dictionary.pop(key, None)
+		temp_dictionary = {}
+		# grab all things that have integers
+		for key, value in f.iteritems():
+			integer = re.search(r'\d+$', key)
+			if integer is not None:
+				integer = integer.group()
+				if integer in temp_dictionary.keys():
+					pass
+				else:
+					temp_dictionary[integer] = {}
 
-			# adds a blank 'isRepresentedBy in ObjMeta if no datastream has been selected to for this'
-			represented = 'isRepresentedBy'
-			if represented in form_data:
-				pass
-			else:
-				form_data['isRepresentedBy'] = ''
+				key = re.sub('\_'+str(integer)+'$', '', key)
+				temp_dictionary[integer][key] = value
 
-			if flag:
-				break
-			form_data['datastreams'].append(temp_dictionary)
+				if key.startswith('isRepresentedBy'):
+					# make sure it doesn't exist in already
+					if 'isRepresentedBy' in form_data:
+						pass
+					else:
+						form_data['isRepresentedBy'] = temp_dictionary[integer]['dsID']
+					# now, delete it out of the temp_dictionary
+					temp_dictionary[integer].pop(key, None)
+		for key, value in temp_dictionary.iteritems():
+			form_data['datastreams'].append(value)
 
-			objMeta = ObjMeta(**form_data)
-			session['objMetaManifestData'] = form_data
-			objMeta.downloadFile(form_data)
-			counter = counter + 1
+
+		# adds a blank 'isRepresentedBy' in ObjMeta if no datastream has been selected for this
+		if 'isRepresentedBy' in form_data:
+			pass
+		else:
+			form_data['isRepresentedBy'] = ''
+
+		# Instantiate the ObjMeta class; form_data will become individual attributes of the object
+		objMeta = ObjMeta(**form_data)
+
+		# Push form_data into a session cookie
+		session['objMetaManifestData'] = form_data
+		objMeta.downloadFile(form_data)
+
 		return render_template("stagingManifest.html", form_data=form_data)
 
 @createManifest.route('/previewManifest', methods=['GET', 'POST'])

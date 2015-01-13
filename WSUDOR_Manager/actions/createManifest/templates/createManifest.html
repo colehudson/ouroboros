@@ -18,7 +18,9 @@
             <div class="form-group">
                 {{ form.contentModel.label(class="control-label") }} {{ form.contentModel(class="form-control input-sm") }}
             </div>
-	        <div class="datastream">
+            <h4>Datastreams</h4>
+	        <div class="datastreamManifest">
+                <hr>
 	            <a href="#" class="deleteDS">Delete</a>
             <div class="form-group">
                 {{ form.fileName_1.label(class="control-label") }} {{ form.fileName_1(class="form-control input-sm") }}
@@ -36,6 +38,9 @@
 			<div class="form-group">
 				{{ form.dsLabel_1.label(class="control-label") }} {{ form.dsLabel_1(class="form-control input-sm") }}
 			</div>
+            <div class="form-group">
+                {{ form.order_1.label(class="control-label") }} {{ form.order_1(class="form-control input-sm") }}
+            </div>
 			<div class="form-group">
 				{{ form.internalRelationships_1.label(class="control-label") }} {{ form.internalRelationships_1(class="form-control input-sm") }}
 			</div>

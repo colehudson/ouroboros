@@ -5,7 +5,7 @@ var attrs = ['for', 'id', 'name'];
 function resetAttributeNames(section) {
 	console.log(section);
 
-    var tags = section.find('input, label'), idx = $('.datastream').length - 1;
+    var tags = section.find('input, label'), idx = $('.datastreamManifest').length - 1;
     console.log(idx);
     tags.each(function() {
       var $this = $(this);
@@ -20,10 +20,10 @@ function resetAttributeNames(section) {
                    
 $('.addDS').click(function(e){
         e.preventDefault();
-        var lastRepeatingGroup = $('.datastream').last();
+        var lastRepeatingGroup = $('.datastreamManifest').last();
         var cloned = lastRepeatingGroup.clone(true);
         cloned.find("input").val("");
-    cloned.find("input:radio").attr("checked", false);
+        cloned.find("input:checkbox").attr("checked", false);
         cloned.insertAfter(lastRepeatingGroup);
         resetAttributeNames(cloned);
     });
@@ -32,7 +32,7 @@ $('.addDS').click(function(e){
 $('.deleteDS').click(function(e){
         e.preventDefault();
         var current = $(this).parent('div');
-        var other = current.siblings('.datastream');
+        var other = current.siblings('.datastreamManifest');
         if (other.length === 0) {
             alert("You should at least have one datastream");
             return;

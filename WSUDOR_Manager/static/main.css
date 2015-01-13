@@ -38,3 +38,13 @@ tr.headers {
 #rdf_triples_modify td {
 	padding:5px 20px 5px 5px;		
 }
+
+.datastreamManifest {
+	padding-left:5em;
+}
+
+.datastreamManifest hr {
+	border-top-width:3px;
+	border-top-color: black;
+	width:25%;
+}

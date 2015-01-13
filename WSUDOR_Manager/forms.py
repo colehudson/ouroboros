@@ -55,6 +55,7 @@ class createManifestForm(Form):
 	isRepresentedBy_1 = BooleanField('Make Thumbnail for Object', default=False)
 	MIMEType_1 = StringField('MIME-Type:')
 	dsLabel_1 = StringField('Label:')
+	order_1 = StringField('Datastream Order:')
 	internalRelationships_1 = StringField('Type Out Internal Relationships')
 
 
